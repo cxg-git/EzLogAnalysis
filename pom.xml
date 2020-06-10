@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>EzLogAnalysis</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>EzSearchLogAnalysis</module>
+    </modules>
+
+    <properties>
+        <!--基础部分 通用配置-->
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <log4j.version>1.2.17</log4j.version>
+        <slf4j.version>1.7.15</slf4j.version>
+        <junit.version>4.12</junit.version>
+        <lombax.version>1.18.12</lombax.version>
+        <hutool.version>5.2.5</hutool.version>
+        <spring-boot.version>2.1.13.RELEASE</spring-boot.version>
+        <fastjson.version>1.2.47</fastjson.version>
+        <mongodb.version>3.12.5</mongodb.version>
+        <spring-data-mongodb>2.1.5.RELEASE</spring-data-mongodb>
+
+    </properties>
+
+
+</project>

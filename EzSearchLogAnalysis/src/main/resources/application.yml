@@ -1,0 +1,19 @@
+######################## common config : ########################
+server:
+  port: 8080
+  address: localhost
+
+spring:
+  application:
+    name: ETL-SpringBoot
+  mongo:
+    host: 192.168.1.112
+    port: 27017
+    dbname: GZDB_LOG
+    connectionsPerHost: 50
+
+logging:
+  level:
+    root: info
+
+
