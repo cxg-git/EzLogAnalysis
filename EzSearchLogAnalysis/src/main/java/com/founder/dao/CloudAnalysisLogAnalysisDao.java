@@ -2,6 +2,7 @@ package com.founder.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface CloudAnalysisLogAnalysisDao {
     //模型总数量
@@ -9,13 +10,13 @@ public interface CloudAnalysisLogAnalysisDao {
     //开通用户总数量
     public Integer RegisteredUserNum(Date startTime,Date endTime);
     //各单位用户数量统计
-    public List<Integer> PerUnitOfUserNum(Date startTime, Date endTime);
+    public Map<String,Integer> PerUnitOfUserNum(Date startTime, Date endTime);
     //各单位模型数量
-    public List<Integer> PerUnitOfModelNum(Date startTime,Date endTime);
+    public Map<String,Integer> PerUnitOfModelNum(Date startTime,Date endTime);
     //各用户模型数量
-    public List<Integer> PerUserOfModelNum(Date startTime,Date endTime);
+    public Map<String,Integer> PerUserOfModelNum(Date startTime,Date endTime);
     //模型发布成服务数量
-    public List<Integer> ModelPushedServiceNum(Date startTime,Date endTime);
+    public Map<String,Integer> ModelPushedServiceNum(Date startTime,Date endTime);
     //各单位发布成服务模型数量
 
     //模型执行总次数

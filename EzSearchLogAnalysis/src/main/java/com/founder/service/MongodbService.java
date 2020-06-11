@@ -1,21 +1,12 @@
 package com.founder.service;
 
 import com.founder.model.AppDetailVisitLog;
-import com.founder.model.AppDetailVisitLog;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class MongodbService {

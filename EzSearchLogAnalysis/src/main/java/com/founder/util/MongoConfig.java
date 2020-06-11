@@ -11,12 +11,12 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 @Configuration
 public class MongoConfig {
 
-    @Value("${spring.mongo.dbname}")
-    private String dbname;
-    @Value("${spring.mongo.host}")
+    @Value("${spring.data.mongodb.host}")
     private String MongoHost;
-    @Value("${spring.mongo.port}")
+    @Value("${spring.data.mongodb.port}")
     private String MongoPort;
+    @Value("${spring.data.mongodb.database}")
+    private String database;
     @Value("${spring.mongo.connectionsPerHost}")
     private String connectionsPerHost;
 
@@ -57,7 +57,7 @@ public class MongoConfig {
     @Bean
     @ConditionalOnClass(MongoClient.class)
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-        MongoTemplate mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient, dbname));
+        MongoTemplate mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient, database));
         return mongoTemplate;
     }
 
