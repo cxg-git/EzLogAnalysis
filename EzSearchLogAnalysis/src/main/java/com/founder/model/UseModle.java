@@ -4,8 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class USEMODLE {
-    private String name;
+public class UseModle {
+    private String _id;
     private String count;
-
 }

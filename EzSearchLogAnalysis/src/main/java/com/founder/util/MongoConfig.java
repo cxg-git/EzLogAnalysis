@@ -17,7 +17,7 @@ public class MongoConfig {
     private String MongoPort;
     @Value("${spring.data.mongodb.database}")
     private String database;
-    @Value("${spring.mongo.connectionsPerHost}")
+    @Value("${spring.data.mongodb.connectionsPerHost}")
     private String connectionsPerHost;
 
     /**

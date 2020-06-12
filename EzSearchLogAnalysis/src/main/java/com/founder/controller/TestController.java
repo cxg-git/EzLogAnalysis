@@ -1,13 +1,19 @@
 package com.founder.controller;
 
 
+import cn.hutool.core.date.DateUtil;
+import com.founder.dao.impl.CloudSearchLogAnalysisImpl;
+import com.founder.model.TimeModel;
+import com.founder.model.UseModle;
 import com.founder.model.User;
 import com.founder.api.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.Date;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +27,9 @@ import java.util.Map;
 @RequestMapping("test")
 @Slf4j
 public class TestController {
+
+    @Autowired
+    CloudSearchLogAnalysisImpl cloudSearchLogAnalysis = null;
 
    @GetMapping("")
    public String test(){
@@ -45,4 +54,46 @@ public class TestController {
     public String getStr(){
        return "hello";
    }
+
+   @PostMapping("/history/search")
+   public long getHistroySearchCountByTime(@RequestBody  TimeModel timeModel){
+       Date end = DateUtil.parseDate(timeModel.getEndTime());
+       Date start = DateUtil.parseDate(timeModel.getStartTime());
+       Long count = cloudSearchLogAnalysis.AllCountOfHistorySearch(start, end);
+       return count;
+   }
+
+   @PostMapping("/history/day")
+   public List<UseModle> getPerDaySearchNumByTime(@RequestBody TimeModel timeModel){
+       Date end = DateUtil.parseDate(timeModel.getEndTime());
+       Date start = DateUtil.parseDate(timeModel.getStartTime());
+       List<UseModle> usemodles = cloudSearchLogAnalysis.PerDaySearchNum(start, end);
+       return usemodles;
+   }
+
+    @PostMapping("/history/month")
+    public List<UseModle> getPerMonthSearchNumByTime(@RequestBody TimeModel timeModel){
+        Date end = DateUtil.parseDate(timeModel.getEndTime());
+        Date start = DateUtil.parseDate(timeModel.getStartTime());
+        List<UseModle> usemodles = cloudSearchLogAnalysis.PerMonthSearchNum(start, end);
+        return usemodles;
+    }
+
+    @PostMapping("/history/unit")
+    public List<UseModle> getPerUnitSearchNumByTime(@RequestBody TimeModel timeModel){
+        System.out.println(timeModel);
+        Date end = DateUtil.parseDate(timeModel.getEndTime());
+        Date start = DateUtil.parseDate(timeModel.getStartTime());
+        List<UseModle> usemodles = cloudSearchLogAnalysis.PerUnitSearchNum(start, end);
+        return usemodles;
+    }
+
+    @PostMapping("/history/user")
+    public List<UseModle> getPerUserSearchNumByTime(@RequestBody TimeModel timeModel){
+        Date end = DateUtil.parseDate(timeModel.getEndTime());
+        Date start = DateUtil.parseDate(timeModel.getStartTime());
+        List<UseModle> usemodles = cloudSearchLogAnalysis.PerUserSearchNumOfSort(start, end);
+       return usemodles;
+    }
+
 }

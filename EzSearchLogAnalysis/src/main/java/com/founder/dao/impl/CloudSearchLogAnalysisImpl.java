@@ -3,27 +3,28 @@ package com.founder.dao.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.founder.dao.CloudSearchLogAnalysisDao;
-import com.founder.model.USEMODLE;
+import com.founder.model.UseModle;
 import com.founder.util.MongoConfig;
 import com.mongodb.MongoClient;
-import org.junit.Test;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 
-import java.text.SimpleDateFormat;
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
+@Service
 public class CloudSearchLogAnalysisImpl implements CloudSearchLogAnalysisDao {
 
-    MongoConfig mongoConfig;
+    @Resource
+    MongoConfig mongoConfig = null;
 
-    public static final String APPDETAILVISITLOG = "APPDETAILVISITLOG";
+    public static final String APPDETAILVISITLOG = "APP_DETAIL_VISIT_TABLE";
     private Date startTime;
     private Date endTime;
 
@@ -39,71 +40,113 @@ public class CloudSearchLogAnalysisImpl implements CloudSearchLogAnalysisDao {
 
     @Override
     public Long AllCountOfHistorySearch(Date startTime, Date endTime) {
-        String startStr = DateUtil.format(startTime, "yyyyMMdd");
-        String endStr = DateUtil.format(endTime, "yyyyMMdd");
+        String startStr = DateUtil.format(startTime, "yyyyMMddHHmmss");
+        String endStr = DateUtil.format(endTime, "yyyyMMddHHmmss");
 
         MongoTemplate mongoTemplate = getMongoTemplate();
         // 用来封装查询条件
         Query query = new Query();
         Criteria criteria = new Criteria();
-        query.addCriteria(Criteria.where("USEDATE").gte(startStr));
-        query.addCriteria(Criteria.where("USEDATE").lte(endStr));
+        query.addCriteria(Criteria.where("USEDATE").gte(startStr).lte(endStr));
         query.addCriteria(criteria.and("USEFUNCTION").is("全文智能搜索"));
-        query.addCriteria(criteria.and("USEMOUDLE").is("普通搜索"));
-
-        long count = mongoTemplate.count(query, Integer.class, APPDETAILVISITLOG);
+        query.addCriteria(criteria.and("USEMOUDLE").in(new Object[]{"高级搜索", "普通搜索", "综合查询"}));
+        System.out.println(query.toString());
+        long count = mongoTemplate.count(query, long.class, APPDETAILVISITLOG);
         return count;
     }
 
-    @Test
-    public void test () {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        System.out.println(df.format(new Date()));
-
-    }
 
     // yyyy-MM-dd HH:mm:ss
     @Override
-    public List<USEMODLE> PerDaySearchNum(Date startTime, Date endTime) {
+    public List<UseModle> PerDaySearchNum(Date startTime, Date endTime) {
 
-        String startStr = DateUtil.format(startTime, "yyyyMMdd");
-        String endStr = DateUtil.format(endTime, "yyyyMMdd");
+        String startStr = DateUtil.format(startTime, "yyyyMMddHHmmss");
+        String endStr = DateUtil.format(endTime, "yyyyMMddHHmmss");
         MongoTemplate mongoTemplate = getMongoTemplate();
 
-
-//        GroupOperation useFunctionGroup = Aggregation.group("USEFUNCTION").count().as("num").sum("totalProduct").as("count");
         Aggregation aggregation = Aggregation.newAggregation(
-                        Aggregation.match(Criteria.where("USEDATE").gte(startStr).lte(endTime)),
-                        Aggregation.group("USEFUNCTION").count().as("num").sum("totalProduct").as("count")
+                        Aggregation.match(Criteria.where("USEDATE").gte(startStr).lte(endStr)),
+//                        Aggregation.group("USEDATE".substring(0,8)).count().as("num"),
+                        Aggregation.project("USEDATE").andExpression("substr(USEDATE,0,8)").as("day"),
+                        Aggregation.group("day").count().as("num"),
+                        Aggregation.sort(Sort.Direction.DESC, "_id")
                 );
-        AggregationResults<USEMODLE> noRepeatDataList = mongoTemplate.aggregate(aggregation, APPDETAILVISITLOG,USEMODLE.class);
-        List<USEMODLE> mappedResults = noRepeatDataList.getMappedResults();
+        System.out.println(aggregation.toString());
+        AggregationResults<UseModle> noRepeatDataList = mongoTemplate.aggregate(aggregation, APPDETAILVISITLOG, UseModle.class);
+        List<UseModle> mappedResults = noRepeatDataList.getMappedResults();
         return mappedResults;
     }
 
     @Override
-    public Map<String, Integer> PerMonthSearchNum(String startTime, String endTime) {
+    public List<UseModle>PerMonthSearchNum(Date startTime, Date endTime) {
+        String startStr = DateUtil.format(startTime, "yyyyMMddHHmmss");
+        String endStr = DateUtil.format(endTime, "yyyyMMddHHmmss");
+        MongoTemplate mongoTemplate = getMongoTemplate();
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("USEDATE").gte(startStr).lte(endStr)),
+                Aggregation.project("USEDATE").andExpression("substr(USEDATE,0,6)").as("month"),
+                Aggregation.group("month").count().as("count"),
+                Aggregation.sort(Sort.Direction.DESC, "_id")
+        );
+
+
+        System.out.println(aggregation.toString());
+        AggregationResults<UseModle> noRepeatDataList = mongoTemplate.aggregate(aggregation, APPDETAILVISITLOG, UseModle.class);
+        List<UseModle> mappedResults = noRepeatDataList.getMappedResults();
+        return mappedResults;
+    }
+
+
+    @Override
+    public List<UseModle> MaxSearchKeyWordSort(Date startTime, Date endTime) {
+
 
         return null;
     }
 
+    /**
+     * mongo 各单位检索次数查询
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @Override
-    public Map<String, Integer> MaxSearchKeyWordSort(String startTime, String endTime) {
-        return null;
+    public List<UseModle> PerUnitSearchNum(Date startTime, Date endTime) {
+        String startStr = DateUtil.format(startTime, "yyyyMMddHHmmss");
+        String endStr = DateUtil.format(endTime, "yyyyMMddHHmmss");
+        MongoTemplate mongoTemplate = getMongoTemplate();
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("USEDATE").gte(startStr).lte(endStr)),
+                Aggregation.group("SSZZJGNAME").count().as("count"),
+                Aggregation.sort(Sort.Direction.DESC, "count")
+        );
+        System.out.println(aggregation.toString());
+        AggregationResults<UseModle> perUnitSearchNumList = mongoTemplate.aggregate(aggregation, APPDETAILVISITLOG, UseModle.class);
+        List<UseModle> mappedResults = perUnitSearchNumList.getMappedResults();
+        return mappedResults;
     }
 
     @Override
-    public Map<String, Integer> PerUnitSearchNum(String startTime, String endTime) {
-        return null;
+    public List<UseModle> PerUserSearchNumOfSort(Date startTime, Date endTime) {
+
+        String startStr = DateUtil.format(startTime, "yyyyMMddHHmmss");
+        String endStr = DateUtil.format(endTime, "yyyyMMddHHmmss");
+        MongoTemplate mongoTemplate = getMongoTemplate();
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("USEDATE").gte(startStr).lte(endStr)),
+                Aggregation.group("USERXM").count().as("count"),
+                Aggregation.sort(Sort.Direction.DESC, "count")
+        );
+
+        AggregationResults<UseModle> useSearchNumAggList = mongoTemplate.aggregate(aggregation, APPDETAILVISITLOG, UseModle.class);
+        List<UseModle> mappedResults = useSearchNumAggList.getMappedResults();
+        return mappedResults;
     }
 
     @Override
-    public Map<String, Integer> AllUserSearchNumOfSort(String startTime, String endTime) {
-        return null;
-    }
-
-    @Override
-    public Map<String, Integer> SingleUserSearchContent(String startTime, String endTime) {
+    public List<UseModle> SingleUserSearchContent(Date startTime, Date endTime) {
         return null;
     }
 }
