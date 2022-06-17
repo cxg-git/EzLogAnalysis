@@ -27,7 +27,7 @@
         <lombax.version>1.18.12</lombax.version>
         <hutool.version>5.2.5</hutool.version>
         <spring-boot.version>2.1.13.RELEASE</spring-boot.version>
-        <fastjson.version>1.2.47</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <mongodb.version>3.12.5</mongodb.version>
         <druid.version>1.1.22</druid.version>
         <spring-data-mongodb>2.1.5.RELEASE</spring-data-mongodb>
